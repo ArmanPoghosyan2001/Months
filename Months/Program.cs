@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 
 namespace Months
 {
@@ -7,12 +8,13 @@ namespace Months
         static void Main(string[] args)
         {
             Months months = new Months();
-            int NumberofMay = months["May"];
-            string secondMonth = months[2];
-            Console.WriteLine(NumberofMay + "  " + secondMonth);
+            foreach (var item in months)
+            {
+                Console.WriteLine($"{item}  ");
+            }
         }
     }
-    public class Months
+    public class Months : IEnumerable
     {
         private string[] months = new string[]
         {
@@ -38,6 +40,10 @@ namespace Months
             get { return months[i - 1]; }
         }
 
+        public IEnumerator GetEnumerator()
+        {
+            return new MonthEnumerator(months, months.Length);
+        }
 
         private int GetIndex(string month)
         {
@@ -50,6 +56,28 @@ namespace Months
                 }
             }
             return defaultmonth;
+        }
+    }
+    public class MonthEnumerator : IEnumerator
+    {
+        int _size;
+        int _count;
+        string[] _source;
+        public MonthEnumerator(string[] source, int size)
+        {
+            _source = source;
+            _size = size;
+        }
+        public object Current => _source[_count++];
+
+        public bool MoveNext()
+        {
+            return _count < _size;
+        }
+
+        public void Reset()
+        {
+            throw new NotImplementedException();
         }
     }
 }
